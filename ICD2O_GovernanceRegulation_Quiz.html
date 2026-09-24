@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governance, Regulation &amp; Privacy Check — Unit 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+  :root {
+    --bg: #0c1224; --panel: #141b32; --panel2: #1b2545;
+    --teal: #00c2d4; --gold: #e0a92b; --red: #e5534b; --green: #3ecf7e;
+    --text: #eef1fb; --muted: #93a0c4; --border: #2a3560;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif; min-height: 100vh; }
+  body { display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+  .card { width: 100%; max-width: 660px; background: var(--panel); border: 1px solid var(--border); border-radius: 18px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  h1 { font-family: 'Archivo Black', sans-serif; font-size: 1.4rem; margin: 0 0 4px; letter-spacing: 0.3px; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+  .hidden { display: none !important; }
+
+  /* Gate screen */
+  #gate label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--gold); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+  #gate input[type=text] { width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); font-size: 1.05rem; font-family: 'Manrope', sans-serif; margin-bottom: 20px; }
+  #gate input[type=text]:focus { outline: 2px solid var(--teal); }
+  .btn { border: none; border-radius: 10px; padding: 14px 22px; font-weight: 800; font-size: 1rem; cursor: pointer; font-family: 'Manrope', sans-serif; transition: transform 0.1s ease; }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--gold); color: #1b1200; width: 100%; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+  .topics-note { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; }
+  .honor-box { background: rgba(229,83,75,0.1); border: 1px solid rgba(229,83,75,0.4); border-radius: 10px; padding: 12px 14px; font-size: 0.85rem; color: #ffb4af; margin-bottom: 20px; }
+  .honor-box b { color: #ff9891; }
+
+  /* Quiz screen */
+  #quiz .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .pill { background: var(--panel2); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--teal); }
+  .pill.score { color: var(--gold); }
+  .progress-track { height: 6px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); transition: width 0.3s ease; }
+  .topic-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 6px; margin-right: 6px; margin-bottom: 12px; }
+  .topic-tag.ku { background: rgba(0,194,212,0.15); color: var(--teal); }
+  .topic-tag.thinking { background: rgba(224,169,43,0.15); color: var(--gold); }
+  .topic-tag.communication { background: rgba(62,207,127,0.15); color: var(--green); }
+  .topic-tag.application { background: rgba(229,83,75,0.15); color: #ff9891; }
+  .type-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 6px; margin-bottom: 12px; background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+  .question { font-size: 1.12rem; font-weight: 700; margin-bottom: 18px; line-height: 1.4; }
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .option { text-align: left; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); font-size: 0.98rem; cursor: pointer; font-family: 'Manrope', sans-serif; }
+  .option:hover { border-color: var(--teal); }
+  .option.correct { border-color: var(--green); background: rgba(62,207,127,0.15); }
+  .option.incorrect { border-color: var(--red); background: rgba(229,83,75,0.15); }
+  .option:disabled { cursor: default; }
+  .feedback { font-size: 0.9rem; padding: 12px 14px; border-radius: 10px; margin-bottom: 16px; }
+  .feedback.correct { background: rgba(62,207,127,0.12); color: var(--green); border: 1px solid rgba(62,207,127,0.4); }
+  .feedback.incorrect { background: rgba(229,83,75,0.12); color: #ff9891; border: 1px solid rgba(229,83,75,0.4); }
+  .feedback.partial { background: rgba(224,169,43,0.12); color: var(--gold); border: 1px solid rgba(224,169,43,0.4); }
+  .nav-row { display: flex; justify-content: flex-end; }
+  .fill-input { width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); font-size: 1.05rem; font-family: 'Manrope', sans-serif; margin-bottom: 16px; }
+  .fill-input:focus { outline: 2px solid var(--teal); }
+  .long-area { width: 100%; min-height: 150px; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); font-size: 1rem; font-family: 'Manrope', sans-serif; margin-bottom: 12px; resize: vertical; line-height: 1.5; }
+  .long-area:focus { outline: 2px solid var(--teal); }
+  .char-count { font-size: 0.78rem; color: var(--muted); margin-bottom: 16px; }
+  .model-answer-box { background: var(--panel2); border: 1px solid var(--teal); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+  .model-answer-box .label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); margin-bottom: 6px; }
+  .model-answer-box .body { font-size: 0.92rem; line-height: 1.5; }
+  .keyword-note { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
+  .keyword-note b { color: var(--text); }
+  .match-table { margin-bottom: 4px; }
+  .match-select { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); font-size: 0.92rem; font-family: 'Manrope', sans-serif; }
+  .match-select:focus { outline: 2px solid var(--teal); }
+
+  /* Final screen */
+  #final { text-align: center; }
+  .score-ring { width: 150px; height: 150px; border-radius: 50%; margin: 10px auto 18px; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 6px solid var(--gold); background: var(--panel2); }
+  .score-ring .big { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: var(--gold); }
+  .score-ring .small { font-size: 0.75rem; color: var(--muted); }
+  .final-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 2px; }
+  .final-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 22px; }
+  .breakdown { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; }
+  .breakdown-row { display: flex; justify-content: space-between; align-items: center; background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; }
+  .breakdown-row .label { font-weight: 700; }
+  .breakdown-row .frac { font-family: 'JetBrains Mono', monospace; color: var(--teal); }
+  .level-tag { display: inline-block; padding: 6px 16px; border-radius: 999px; font-weight: 800; font-size: 0.85rem; margin-bottom: 18px; }
+  .level-tag.strong { background: rgba(62,207,127,0.15); color: var(--green); }
+  .level-tag.solid { background: rgba(0,194,212,0.15); color: var(--teal); }
+  .level-tag.developing { background: rgba(224,169,43,0.15); color: var(--gold); }
+  .level-tag.needs { background: rgba(229,83,75,0.15); color: #ff9891; }
+  .action-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .action-row .btn { flex: 1; }
+  .btn-pdf { background: var(--teal); color: #04202a; }
+
+  .review-list { text-align: left; margin-top: 8px; }
+  .review-item { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .review-item .rq { font-weight: 700; font-size: 0.92rem; margin-bottom: 8px; }
+  .review-item .ra { font-size: 0.85rem; margin-bottom: 4px; }
+  .review-item .ra.you { color: var(--muted); }
+  .review-item .ra.right { color: var(--green); }
+  .review-item .ra.wrong { color: #ff9891; }
+  .review-item .ra.partial { color: var(--gold); }
+  .review-item .ra.model { color: var(--teal); }
+  .review-toggle { margin-top: 6px; margin-bottom: 12px; }
+
+  /* Print-only area */
+  #printArea { display: none; }
+  @media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { display: block; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #111; padding: 20px; font-family: Arial, sans-serif; }
+    #printArea h2 { font-size: 20px; margin-bottom: 2px; }
+    #printArea .p-sub { color: #555; font-size: 12px; margin-bottom: 14px; }
+    #printArea .p-score { font-size: 16px; font-weight: bold; margin-bottom: 10px; border: 2px solid #333; padding: 8px 12px; display: inline-block; }
+    #printArea .p-breakdown { margin-bottom: 16px; }
+    #printArea .p-breakdown div { font-size: 12px; margin-bottom: 3px; }
+    #printArea .p-q { border: 1px solid #ccc; padding: 8px 10px; margin-bottom: 8px; page-break-inside: avoid; }
+    #printArea .p-q .pqh { font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+    #printArea .p-q .pqa { font-size: 12px; margin-bottom: 2px; }
+    #printArea .p-right { color: #1a7d3a; }
+    #printArea .p-wrong { color: #b3261e; }
+    #printArea .p-partial { color: #8a6100; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div id="gate">
+    <h1>🛡️ Governance, Regulation &amp; Privacy Check</h1>
+    <div class="subtitle">ICD2O · Unit 1 · Lesson 1.10</div>
+    <div class="topics-note">Covers everything from today: PIPEDA &amp; Canadian privacy rights, cybersecurity best practices, GDPR, HIPAA, PCI DSS, governance vs. regulation vs. compliance, the GRC framework, and NIST 800-53 / ISO 27001 / SOC 2. Questions are tagged by Achievement Chart category (K/U, Thinking, Communication, Application).</div>
+    <div class="honor-box"><b>Before you start:</b> Answer using what you learned in class today, from memory or your own notes — not AI tools or outside searches. Your teacher will see your score and full answers.</div>
+    <label for="nameInput">Enter your name to start</label>
+    <input type="text" id="nameInput" placeholder="e.g. Ali Hassan" autocomplete="off">
+    <button class="btn btn-primary" id="startBtn" disabled>Start Quiz</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="topbar">
+      <span class="pill" id="progressPill">Question 1 / 15</span>
+      <span class="pill score" id="scorePill">Score: 0</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div id="tagsWrap"></div>
+    <div class="question" id="questionText"></div>
+    <div id="answerArea"></div>
+    <div id="feedbackWrap"></div>
+    <div class="nav-row"><button class="btn btn-primary hidden" id="nextBtn">Next Question →</button></div>
+  </div>
+
+  <div id="final" class="hidden">
+    <div class="score-ring">
+      <div class="big" id="finalScoreText">0/24</div>
+      <div class="small">AUTO-SCORED</div>
+    </div>
+    <div class="final-name" id="finalName"></div>
+    <div class="final-sub">completed the Governance, Regulation &amp; Privacy Check</div>
+    <div id="levelTag"></div>
+    <div class="breakdown" id="breakdownWrap"></div>
+    <div class="action-row">
+      <button class="btn btn-pdf" id="pdfBtn">⬇ Download as PDF</button>
+    </div>
+    <button class="btn btn-outline review-toggle" id="reviewBtn" style="width:100%;">Review All Answers</button>
+    <div class="review-list hidden" id="reviewList"></div>
+    <button class="btn btn-outline" id="retryBtn" style="width:100%;">Try Again</button>
+  </div>
+
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function() {
+  function norm(s) { return (s || '').toLowerCase().trim().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' '); }
+  function escapeHtml(s) { return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+  const QUESTIONS = [
+    // --- Knowledge & Understanding (MCQ + fill, 1 pt each) ---
+    { type: 'mcq', topic: 'ku', q: 'What does PIPEDA govern?', opts: ['How Canadian businesses collect, use, and share personal information', 'How EU citizens\' medical records are stored', 'How credit card companies process payments', 'How international treaties are enforced'], correct: 0, points: 1,
+      explain: 'PIPEDA is the main federal law governing how Canadian businesses handle personal information.' },
+    { type: 'mcq', topic: 'ku', q: 'Which of these is a right PIPEDA gives you over your own personal data?', opts: ['The right to demand a company\'s trade secrets', 'The right to access what personal information a company holds about you', 'The right to unlimited free products', 'The right to prevent all companies from ever collecting any data'], correct: 1, points: 1,
+      explain: 'You can ask a company what personal information they hold about you and see it (right to access).' },
+    { type: 'mcq', topic: 'ku', q: 'GDPR protects the personal data of residents of which region?', opts: ['Canada', 'The United States only', 'The European Union', 'Anywhere data is stored on a US server'], correct: 2, points: 1,
+      explain: 'GDPR is the European Union\'s data protection law — it applies to any company handling EU residents\' data, no matter where the company is based.' },
+    { type: 'fill', topic: 'ku', q: 'HIPAA protects sensitive information in the ______ sector.', accepted: ['healthcare', 'health'], points: 1,
+      explain: 'HIPAA is the US law protecting health-related information.' },
+    { type: 'fill', topic: 'ku', q: 'PCI DSS is mainly about protecting ______ data (CHD).', accepted: ['cardholder', 'card', 'credit card', 'payment card'], points: 1,
+      explain: 'PCI DSS protects cardholder data (CHD) — information tied to credit/debit card transactions.' },
+
+    // --- True / False (K/U, 1 pt each) ---
+    { type: 'tf', topic: 'ku', q: 'GDPR only applies to companies that are physically based in the European Union.', correct: false, points: 1,
+      explain: 'False — GDPR applies to ANY company worldwide that handles the personal data of EU residents, no matter where the company itself is based.' },
+    { type: 'tf', topic: 'ku', q: 'PCI DSS was created and is enforced by a government agency.', correct: false, points: 1,
+      explain: 'False — PCI DSS is an industry standard created by the card brands themselves (Visa, Mastercard, etc.), not a government.' },
+    { type: 'tf', topic: 'ku', q: 'Compliance means an organization is actually following the laws, regulations, and standards it\'s supposed to follow.', correct: true, points: 1,
+      explain: 'True — compliance is the state of actually doing what governance and regulation require, not just having a policy that says so.' },
+
+    // --- Matching (K/U, 1 pt per correct pair) ---
+    { type: 'match', topic: 'ku', points: 4,
+      q: 'Match each term to its correct description.',
+      pairs: [
+        { term: 'GDPR', def: 'The EU\'s data protection law — applies to any company handling EU residents\' personal data' },
+        { term: 'HIPAA', def: 'A US law protecting sensitive health/medical information' },
+        { term: 'PCI DSS', def: 'An industry standard (not a law) protecting credit/debit cardholder data' },
+        { term: 'GRC', def: 'A framework combining Governance, Risk Management, and Compliance' },
+      ],
+      explain: 'GDPR = EU privacy law · HIPAA = US health data law · PCI DSS = card industry standard · GRC = Governance + Risk Management + Compliance framework.' },
+
+    // --- Thinking (long, keyword-scored, 2 pts each) ---
+    { type: 'long', topic: 'thinking', maxPoints: 2,
+      q: 'In a full paragraph, explain the difference between governance, regulation, and compliance, using one example of each from today\'s lesson.',
+      keywords: ['governance', 'regulation', 'compliance', 'manage', 'direct', 'law', 'rule', 'follow', 'organization', 'government'],
+      model: 'Governance is how an organization manages and directs itself — its own internal strategy and policies. Regulation is a rule or law enforced by an outside body, like a government (for example, PIPEDA or GDPR), that an organization must follow. Compliance is the state of actually following those laws and standards — proving the organization is doing what governance and regulation require. For example, a company\'s governance might set a password policy (governance), because PIPEDA requires reasonable security (regulation), and passing a security audit shows they\'re compliant (compliance).' },
+    { type: 'long', topic: 'thinking', maxPoints: 2,
+      q: 'A company sells products online to customers in the European Union AND accepts credit card payments. Which TWO regulations from today apply to them, and why both?',
+      keywords: ['gdpr', 'pci', 'pci dss', 'european', 'eu', 'card', 'payment', 'cardholder', 'residents', 'personal data'],
+      model: 'GDPR applies because the company handles the personal data of EU residents, regardless of where the company itself is based — GDPR follows the customer\'s location, not the seller\'s. PCI DSS also applies because the company accepts credit card payments, and PCI DSS is required of any business that processes cardholder data, set by the card networks (Visa, Mastercard, etc.) rather than a government. Both apply at the same time because they cover two different things — one is about the customers\' personal data broadly, the other is specifically about payment card data.' },
+    { type: 'long', topic: 'thinking', maxPoints: 2,
+      q: 'Compare NIST 800-53, ISO/IEC 27001, and SOC 2. What is different about what each one actually is (a checklist, a standard, or an audit report)?',
+      keywords: ['nist', 'iso', 'soc', 'checklist', 'controls', 'standard', 'certified', 'audit', 'report', 'international'],
+      model: 'NIST 800-53 is a detailed checklist of security controls, organized into families, that organizations can measure themselves against. ISO/IEC 27001 is an international standard for building and certifying an entire Information Security Management System — a company can become "ISO 27001 certified." SOC 2 is different again: it\'s an auditing standard, where independent auditors check a company\'s controls around the CIA Triad and produce a report the company can share with customers as proof. So NIST is a control checklist, ISO 27001 is a certifiable standard, and SOC 2 is an audit report — three different tools for proving security, used in different situations.' },
+
+    // --- Communication (long, keyword-scored, 2 pts each) ---
+    { type: 'long', topic: 'communication', maxPoints: 2,
+      q: 'In your own words, explain why a healthcare company would need to follow HIPAA in addition to PIPEDA.',
+      keywords: ['health', 'sensitive', 'hipaa', 'extra', 'specific', 'sector', 'patient', 'additional', 'medical'],
+      model: 'PIPEDA is a general privacy law that applies to most Canadian businesses, but health information is especially sensitive — a leak could affect someone\'s job, insurance, or reputation. Because of this, healthcare organizations need an additional, sector-specific law (HIPAA, in the US) that sets stricter, more detailed rules specifically for health records, on top of whatever general privacy law already applies.' },
+    { type: 'long', topic: 'communication', maxPoints: 2,
+      q: 'In your own words, explain why an organization would use an integrated GRC framework instead of handling governance, risk, and compliance as three separate, unconnected jobs.',
+      keywords: ['integrated', 'together', 'align', 'goals', 'efficient', 'connected', 'consistent', 'overlap', 'organized'],
+      model: 'Governance, risk, and compliance all affect each other — a new regulation changes what risks matter, and managing risk well is part of proving compliance. If they were handled completely separately, teams could waste effort, contradict each other, or miss risks that fall between departments. An integrated GRC framework keeps all three aligned with the organization\'s actual goals, makes the work more efficient, and gives one consistent picture of how secure and compliant the organization really is.' },
+    { type: 'long', topic: 'communication', maxPoints: 2,
+      q: 'In your own words, explain why PCI DSS is called an "industry standard" rather than a government regulation, and why companies still have to follow it.',
+      keywords: ['industry', 'standard', 'government', 'card', 'visa', 'mastercard', 'comply', 'lose', 'process', 'business'],
+      model: 'PCI DSS wasn\'t created by a government — it was created by the card companies themselves, like Visa and Mastercard, which makes it an industry standard rather than a law. Even though no government is enforcing it, businesses still have to comply, because the card networks can refuse to let a non-compliant business process card payments at all — so following it isn\'t optional in practice, even without a government behind it.' },
+
+    // --- Application (long, keyword-scored, 2 pts each) ---
+    { type: 'long', topic: 'application', maxPoints: 2,
+      q: 'Choose ONE cybersecurity best practice from Thursday morning (password managers, MFA, software updates, or public Wi-Fi caution) and explain how it would specifically protect someone in a real situation.',
+      keywords: ['password', 'mfa', 'authentication', 'update', 'wifi', 'wi-fi', 'phishing', 'hacker', 'breach', 'protect'],
+      model: 'Example: multi-factor authentication (MFA) protects you even if a hacker steals your password in a data breach — because they would still need your second factor (like a code sent to your phone) to actually log in. This matters in a real situation like a phishing attack, where someone might trick you into typing your password on a fake site, but MFA still stops them from getting into your real account.' },
+    { type: 'long', topic: 'application', maxPoints: 2,
+      q: 'Pick ONE of NIST 800-53, ISO/IEC 27001, or SOC 2, and explain in your own words what it is for and why a real organization would use it.',
+      keywords: ['nist', 'iso', 'soc', 'controls', 'audit', 'standard', 'certified', 'prove', 'checklist', 'customers'],
+      model: 'Example: SOC 2 is an auditing standard that checks whether a company\'s data stays confidential, keeps its integrity, and remains available. A cloud company might get a SOC 2 report so it can prove to its own customers — with independent, outside evidence — that their data is actually being protected, which builds trust and can be a competitive advantage.' },
+    { type: 'long', topic: 'application', maxPoints: 2,
+      q: 'A small Canadian online store ships to customers across Canada, the US, and the EU, and accepts credit card payments. Identify which regulation(s)/standard(s) from today would apply to them, and explain why each one applies.',
+      keywords: ['pipeda', 'gdpr', 'pci', 'pci dss', 'canada', 'eu', 'card', 'residents', 'personal data', 'payment'],
+      model: 'PIPEDA applies because the store is a Canadian business handling personal information. GDPR applies because it has customers who are EU residents, no matter where the store itself operates. PCI DSS applies because it accepts credit card payments and must protect cardholder data. HIPAA would NOT apply, since the store isn\'t handling health information. This shows how one business can be subject to multiple regulations at once, depending on WHO its customers are and WHAT kind of data it handles.' },
+  ];
+
+  const TOPIC_META = {
+    ku: { label: 'Knowledge & Understanding', class: 'ku' },
+    thinking: { label: 'Thinking', class: 'thinking' },
+    communication: { label: 'Communication', class: 'communication' },
+    application: { label: 'Application', class: 'application' },
+  };
+  const TYPE_LABEL = { mcq: 'Multiple Choice', fill: 'Fill in the Blank', long: 'Long Answer', tf: 'True or False', match: 'Matching' };
+  const MAX_SCORE = QUESTIONS.reduce((sum, q) => sum + (q.maxPoints || q.points || 1), 0);
+
+  const STORAGE_KEY = 'icd2oGovernanceQuizStateV1';
+  let state = { name: '', current: 0, score: 0, answered: false, perTopic: {}, responses: [] };
+
+  function saveState() {
+    try {
+      if (window.claude && window.claude.hot) { window.claude.hot.snapshot(state); return; }
+    } catch (e) {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function loadState() {
+    try {
+      if (window.claude && window.claude.hot && window.claude.hot.snapshotData) return window.claude.hot.snapshotData;
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
+  }
+
+  const gateEl = document.getElementById('gate');
+  const quizEl = document.getElementById('quiz');
+  const finalEl = document.getElementById('final');
+  const nameInput = document.getElementById('nameInput');
+  const startBtn = document.getElementById('startBtn');
+
+  nameInput.addEventListener('input', () => { startBtn.disabled = nameInput.value.trim().length === 0; });
+  nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !startBtn.disabled) startQuiz(); });
+  startBtn.addEventListener('click', startQuiz);
+
+  function startQuiz() {
+    state.name = nameInput.value.trim();
+    state.current = 0;
+    state.score = 0;
+    state.answered = false;
+    state.perTopic = {
+      ku: { correct: 0, total: 0 },
+      thinking: { correct: 0, total: 0 },
+      communication: { correct: 0, total: 0 },
+      application: { correct: 0, total: 0 },
+    };
+    state.responses = [];
+    QUESTIONS.forEach(q => { state.perTopic[q.topic].total += (q.maxPoints || q.points || 1); });
+    saveState();
+    gateEl.classList.add('hidden');
+    quizEl.classList.remove('hidden');
+    renderQuestion();
+  }
+
+  const progressPill = document.getElementById('progressPill');
+  const scorePill = document.getElementById('scorePill');
+  const progressFill = document.getElementById('progressFill');
+  const tagsWrap = document.getElementById('tagsWrap');
+  const questionText = document.getElementById('questionText');
+  const answerArea = document.getElementById('answerArea');
+  const feedbackWrap = document.getElementById('feedbackWrap');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function renderQuestion() {
+    const q = QUESTIONS[state.current];
+    state.answered = false;
+    progressPill.textContent = `Question ${state.current + 1} / ${QUESTIONS.length}`;
+    scorePill.textContent = `Score: ${state.score}/${MAX_SCORE}`;
+    progressFill.style.width = `${(state.current / QUESTIONS.length) * 100}%`;
+    tagsWrap.innerHTML = `<span class="topic-tag ${TOPIC_META[q.topic].class}">${TOPIC_META[q.topic].label}</span><span class="type-tag">${TYPE_LABEL[q.type]}</span>`;
+    questionText.textContent = q.q;
+    answerArea.innerHTML = '';
+    feedbackWrap.innerHTML = '';
+    nextBtn.classList.add('hidden');
+
+    if (q.type === 'mcq') {
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => selectMcq(i));
+        answerArea.appendChild(btn);
+      });
+    } else if (q.type === 'fill') {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'fill-input';
+      input.placeholder = 'Type the missing word...';
+      input.id = 'fillInput';
+      answerArea.appendChild(input);
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = 'Check Answer';
+      btn.style.width = '100%';
+      btn.style.marginBottom = '16px';
+      btn.addEventListener('click', () => submitFill());
+      answerArea.appendChild(btn);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitFill(); });
+      setTimeout(() => input.focus(), 50);
+    } else if (q.type === 'long') {
+      const area = document.createElement('textarea');
+      area.className = 'long-area';
+      area.placeholder = 'Write a full paragraph (4+ sentences) in your own words...';
+      area.id = 'longArea';
+      answerArea.appendChild(area);
+      const count = document.createElement('div');
+      count.className = 'char-count';
+      count.textContent = 'Write at least 80 characters (roughly a few sentences) to submit.';
+      count.id = 'charCount';
+      answerArea.appendChild(count);
+      area.addEventListener('input', () => {
+        const len = area.value.trim().length;
+        count.textContent = len >= 80 ? `${len} characters — ready to submit.` : `Write at least 80 characters (roughly a few sentences) to submit. (${len}/80)`;
+        submitLongBtn.disabled = len < 80;
+      });
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = 'Submit Paragraph';
+      btn.style.width = '100%';
+      btn.style.marginBottom = '16px';
+      btn.disabled = true;
+      btn.addEventListener('click', () => submitLong());
+      answerArea.appendChild(btn);
+      var submitLongBtn = btn;
+    } else if (q.type === 'tf') {
+      ['True', 'False'].forEach((label, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.textContent = label;
+        btn.addEventListener('click', () => submitTf(idx === 0));
+        answerArea.appendChild(btn);
+      });
+    } else if (q.type === 'match') {
+      const shuffledDefs = q.pairs.map(p => p.def).sort(() => Math.random() - 0.5);
+      const table = document.createElement('div');
+      table.className = 'match-table';
+      table.id = 'matchTable';
+      q.pairs.forEach((pair, idx) => {
+        const row = document.createElement('div');
+        row.className = 'match-row';
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.gap = '12px';
+        row.style.marginBottom = '10px';
+        const term = document.createElement('div');
+        term.className = 'match-term';
+        term.textContent = pair.term;
+        term.style.minWidth = '110px';
+        term.style.fontWeight = '700';
+        const select = document.createElement('select');
+        select.className = 'match-select';
+        select.dataset.term = pair.term;
+        select.style.flex = '1';
+        const blank = document.createElement('option');
+        blank.value = '';
+        blank.textContent = '-- choose a description --';
+        select.appendChild(blank);
+        shuffledDefs.forEach(def => {
+          const opt = document.createElement('option');
+          opt.value = def;
+          opt.textContent = def;
+          select.appendChild(opt);
+        });
+        row.appendChild(term);
+        row.appendChild(select);
+        table.appendChild(row);
+      });
+      answerArea.appendChild(table);
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = 'Check Matches';
+      btn.style.width = '100%';
+      btn.style.marginTop = '8px';
+      btn.addEventListener('click', () => submitMatch());
+      answerArea.appendChild(btn);
+    }
+  }
+
+  function recordResponse(obj) {
+    state.responses.push(Object.assign({ q: QUESTIONS[state.current].q, topic: QUESTIONS[state.current].topic, type: QUESTIONS[state.current].type }, obj));
+  }
+
+  function selectMcq(i) {
+    if (state.answered) return;
+    state.answered = true;
+    const q = QUESTIONS[state.current];
+    const buttons = answerArea.querySelectorAll('.option');
+    buttons.forEach((b, idx) => {
+      b.disabled = true;
+      if (idx === q.correct) b.classList.add('correct');
+      else if (idx === i) b.classList.add('incorrect');
+    });
+    const isCorrect = i === q.correct;
+    const pts = isCorrect ? q.points : 0;
+    state.score += pts;
+    state.perTopic[q.topic].correct += pts;
+    scorePill.textContent = `Score: ${state.score}/${MAX_SCORE}`;
+    const fb = document.createElement('div');
+    fb.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+    fb.textContent = (isCorrect ? '✓ Correct — ' : '✗ Not quite — ') + q.explain;
+    feedbackWrap.appendChild(fb);
+    recordResponse({ your: q.opts[i], correctAnswer: q.opts[q.correct], points: pts, maxPoints: q.points, status: isCorrect ? 'right' : 'wrong' });
+    finishAnswer();
+  }
+
+  function submitFill() {
+    if (state.answered) return;
+    state.answered = true;
+    const q = QUESTIONS[state.current];
+    const input = document.getElementById('fillInput');
+    input.disabled = true;
+    const val = input.value;
+    const isCorrect = q.accepted.some(a => norm(a) === norm(val));
+    const pts = isCorrect ? q.points : 0;
+    state.score += pts;
+    state.perTopic[q.topic].correct += pts;
+    scorePill.textContent = `Score: ${state.score}/${MAX_SCORE}`;
+    input.style.borderColor = isCorrect ? 'var(--green)' : 'var(--red)';
+    const fb = document.createElement('div');
+    fb.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+    fb.textContent = (isCorrect ? '✓ Correct — ' : `✗ The accepted answer was "${q.accepted[0]}" — `) + q.explain;
+    feedbackWrap.appendChild(fb);
+    recordResponse({ your: val || '(blank)', correctAnswer: q.accepted[0], points: pts, maxPoints: q.points, status: isCorrect ? 'right' : 'wrong' });
+    finishAnswer();
+  }
+
+  function submitLong() {
+    if (state.answered) return;
+    state.answered = true;
+    const q = QUESTIONS[state.current];
+    const area = document.getElementById('longArea');
+    area.disabled = true;
+    const val = area.value.trim();
+    const normed = norm(val);
+    const hits = q.keywords.filter(kw => normed.includes(norm(kw)));
+    const uniqueHitStems = [...new Set(hits.map(h => h.replace(/s$/, '')))];
+    let pts = 0;
+    if (uniqueHitStems.length >= 3) pts = q.maxPoints;
+    else if (uniqueHitStems.length >= 1) pts = 1;
+    state.score += pts;
+    state.perTopic[q.topic].correct += pts;
+    scorePill.textContent = `Score: ${state.score}/${MAX_SCORE}`;
+
+    const box = document.createElement('div');
+    box.className = 'model-answer-box';
+    box.innerHTML = `<div class="label">Model Answer — Compare With Your Own</div><div class="body">${escapeHtml(q.model)}</div>`;
+    feedbackWrap.appendChild(box);
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback ' + (pts === q.maxPoints ? 'correct' : (pts > 0 ? 'partial' : 'incorrect'));
+    fb.innerHTML = `Auto-score: <b>${pts}/${q.maxPoints}</b> points, based on key ideas detected in your answer.`;
+    feedbackWrap.appendChild(fb);
+
+    const note = document.createElement('div');
+    note.className = 'keyword-note';
+    note.innerHTML = uniqueHitStems.length
+      ? `Key ideas we found in your answer: <b>${uniqueHitStems.join(', ')}</b>. This is a keyword-based auto-score, not full AI grading — your teacher may adjust it after reading your paragraph.`
+      : `We didn't detect key vocabulary from class in your answer. This is a keyword-based auto-score, not full AI grading — your teacher may adjust it after reading your paragraph.`;
+    feedbackWrap.appendChild(note);
+
+    recordResponse({ your: val, correctAnswer: q.model, points: pts, maxPoints: q.maxPoints, status: pts === q.maxPoints ? 'right' : (pts > 0 ? 'partial' : 'wrong'), keywordsFound: uniqueHitStems });
+    finishAnswer();
+  }
+
+  function submitTf(choice) {
+    if (state.answered) return;
+    state.answered = true;
+    const q = QUESTIONS[state.current];
+    const buttons = answerArea.querySelectorAll('.option');
+    buttons.forEach((b, idx) => {
+      b.disabled = true;
+      const btnIsTrue = idx === 0;
+      if (btnIsTrue === q.correct) b.classList.add('correct');
+      else if (btnIsTrue === choice) b.classList.add('incorrect');
+    });
+    const isCorrect = choice === q.correct;
+    const pts = isCorrect ? q.points : 0;
+    state.score += pts;
+    state.perTopic[q.topic].correct += pts;
+    scorePill.textContent = `Score: ${state.score}/${MAX_SCORE}`;
+    const fb = document.createElement('div');
+    fb.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+    fb.textContent = (isCorrect ? '✓ Correct — ' : '✗ Not quite — ') + q.explain;
+    feedbackWrap.appendChild(fb);
+    recordResponse({ your: choice ? 'True' : 'False', correctAnswer: q.correct ? 'True' : 'False', points: pts, maxPoints: q.points, status: isCorrect ? 'right' : 'wrong' });
+    finishAnswer();
+  }
+
+  function submitMatch() {
+    if (state.answered) return;
+    const q = QUESTIONS[state.current];
+    const selects = answerArea.querySelectorAll('.match-select');
+    const anyBlank = [...selects].some(s => !s.value);
+    if (anyBlank) { alert('Please choose a description for every term before checking.'); return; }
+    state.answered = true;
+    let correctCount = 0;
+    const pairResults = [];
+    selects.forEach(select => {
+      select.disabled = true;
+      const term = select.dataset.term;
+      const correctDef = q.pairs.find(p => p.term === term).def;
+      const isRight = select.value === correctDef;
+      if (isRight) correctCount++;
+      select.style.borderColor = isRight ? 'var(--green)' : 'var(--red)';
+      pairResults.push({ term, your: select.value, correct: correctDef, right: isRight });
+    });
+    const pts = Math.round((correctCount / q.pairs.length) * q.points);
+    state.score += pts;
+    state.perTopic[q.topic].correct += pts;
+    scorePill.textContent = `Score: ${state.score}/${MAX_SCORE}`;
+    const fb = document.createElement('div');
+    fb.className = 'feedback ' + (correctCount === q.pairs.length ? 'correct' : (correctCount > 0 ? 'partial' : 'incorrect'));
+    fb.innerHTML = `You matched <b>${correctCount}/${q.pairs.length}</b> correctly — <b>${pts}/${q.points}</b> points. ${q.explain}`;
+    feedbackWrap.appendChild(fb);
+    const list = document.createElement('div');
+    list.className = 'keyword-note';
+    list.innerHTML = pairResults.map(r => `${r.right ? '✓' : '✗'} <b>${escapeHtml(r.term)}</b> → ${escapeHtml(r.your)}${r.right ? '' : ` (correct: ${escapeHtml(r.correct)})`}`).join('<br>');
+    feedbackWrap.appendChild(list);
+    recordResponse({ your: pairResults.map(r => `${r.term} → ${r.your}`).join('; '), correctAnswer: q.pairs.map(p => `${p.term} → ${p.def}`).join('; '), points: pts, maxPoints: q.points, status: correctCount === q.pairs.length ? 'right' : (correctCount > 0 ? 'partial' : 'wrong') });
+    finishAnswer();
+  }
+
+  function finishAnswer() {
+    nextBtn.classList.remove('hidden');
+    nextBtn.textContent = state.current === QUESTIONS.length - 1 ? 'See My Results →' : 'Next Question →';
+    saveState();
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (state.current < QUESTIONS.length - 1) {
+      state.current++;
+      renderQuestion();
+    } else {
+      showFinal();
+    }
+  });
+
+  function levelFor(pct) {
+    if (pct >= 85) return { text: 'Strong Understanding', cls: 'strong' };
+    if (pct >= 70) return { text: 'Solid Understanding', cls: 'solid' };
+    if (pct >= 50) return { text: 'Developing — Needs Review', cls: 'developing' };
+    return { text: 'Needs Support', cls: 'needs' };
+  }
+
+  function showFinal() {
+    quizEl.classList.add('hidden');
+    finalEl.classList.remove('hidden');
+    document.getElementById('finalScoreText').textContent = `${state.score}/${MAX_SCORE}`;
+    document.getElementById('finalName').textContent = state.name;
+    const pct = Math.round((state.score / MAX_SCORE) * 100);
+    const lvl = levelFor(pct);
+    document.getElementById('levelTag').innerHTML = `<span class="level-tag ${lvl.cls}">${lvl.text} — ${pct}%</span>`;
+
+    const breakdownWrap = document.getElementById('breakdownWrap');
+    breakdownWrap.innerHTML = '';
+    Object.keys(TOPIC_META).forEach(key => {
+      const meta = TOPIC_META[key];
+      const t = state.perTopic[key];
+      const row = document.createElement('div');
+      row.className = 'breakdown-row';
+      row.innerHTML = `<span class="label">${meta.label}</span><span class="frac">${t.correct}/${t.total}</span>`;
+      breakdownWrap.appendChild(row);
+    });
+
+    const reviewList = document.getElementById('reviewList');
+    reviewList.innerHTML = '';
+    state.responses.forEach((r, i) => {
+      const item = document.createElement('div');
+      item.className = 'review-item';
+      let html = `<div class="rq">${i + 1}. [${TOPIC_META[r.topic].label} — ${TYPE_LABEL[r.type]}] ${escapeHtml(r.q)}</div>`;
+      html += `<div class="ra you">Your answer: ${escapeHtml(r.your) || '(blank)'}</div>`;
+      html += `<div class="ra ${r.status}">Points: ${r.points}/${r.maxPoints} ${r.status === 'right' ? '✓' : (r.status === 'partial' ? '~' : '✗')}</div>`;
+      if (r.status !== 'right') html += `<div class="ra model">${r.type === 'long' ? 'Model answer' : 'Correct answer'}: ${escapeHtml(r.correctAnswer)}</div>`;
+      item.innerHTML = html;
+      reviewList.appendChild(item);
+    });
+
+    buildPrintArea(pct, lvl);
+    saveState();
+  }
+
+  function buildPrintArea(pct, lvl) {
+    const printArea = document.getElementById('printArea');
+    let html = `<h2>Governance, Regulation &amp; Privacy Check</h2>`;
+    html += `<div class="p-sub">ICD2O · Unit 1 · Lesson 1.10 · ${escapeHtml(state.name)} · ${new Date().toLocaleDateString()}</div>`;
+    html += `<div class="p-score">Score: ${state.score}/${MAX_SCORE} (${pct}%) — ${lvl.text}</div>`;
+    html += `<div class="p-breakdown">`;
+    Object.keys(TOPIC_META).forEach(key => {
+      const t = state.perTopic[key];
+      html += `<div><b>${TOPIC_META[key].label}:</b> ${t.correct}/${t.total}</div>`;
+    });
+    html += `</div>`;
+    state.responses.forEach((r, i) => {
+      html += `<div class="p-q">`;
+      html += `<div class="pqh">${i + 1}. [${TOPIC_META[r.topic].label} — ${TYPE_LABEL[r.type]}] ${escapeHtml(r.q)}</div>`;
+      html += `<div class="pqa">Answer: ${escapeHtml(r.your) || '(blank)'}</div>`;
+      const cls = r.status === 'right' ? 'p-right' : (r.status === 'partial' ? 'p-partial' : 'p-wrong');
+      html += `<div class="pqa ${cls}">Points: ${r.points}/${r.maxPoints}</div>`;
+      if (r.status !== 'right') html += `<div class="pqa">${r.type === 'long' ? 'Model answer' : 'Correct answer'}: ${escapeHtml(r.correctAnswer)}</div>`;
+      html += `</div>`;
+    });
+    printArea.innerHTML = html;
+  }
+
+  document.getElementById('pdfBtn').addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('reviewBtn').addEventListener('click', () => {
+    const list = document.getElementById('reviewList');
+    const btn = document.getElementById('reviewBtn');
+    const nowHidden = list.classList.toggle('hidden');
+    btn.textContent = nowHidden ? 'Review All Answers' : 'Hide Review';
+  });
+
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    finalEl.classList.add('hidden');
+    gateEl.classList.remove('hidden');
+    nameInput.value = '';
+    startBtn.disabled = true;
+    nameInput.focus();
+  });
+
+  // Restore in-progress state if this page was reopened mid-quiz
+  const saved = loadState();
+  if (saved && saved.name) {
+    state = saved;
+    if (state.current >= QUESTIONS.length - 1 && state.answered) {
+      gateEl.classList.add('hidden');
+      showFinal();
+    } else {
+      gateEl.classList.add('hidden');
+      quizEl.classList.remove('hidden');
+      renderQuestion();
+    }
+  }
+
+  try {
+    if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready();
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
